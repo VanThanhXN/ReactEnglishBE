@@ -1,0 +1,29 @@
+{
+  "name": "EngslishApp",
+  "version": "0.0.1",
+  "description": "Awesome project developed with TypeORM.",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/node": "^22.18.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
+    "concurrently": "^9.2.1",
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10",
+    "pg": "^8.16.3",
+    "pg-query-stream": "^4.10.3",
+    "reflect-metadata": "^0.2.2",
+    "rimraf": "^6.0.1",
+    "typeorm": "^0.3.27"
+  },
+  "scripts": {
+    "dev": "nodemon --watch src --ext ts --exec ts-node src/index.ts",
+    "build": "rimraf build && tsc",
+    "start": "npm run build && node build/index.js",
+    "typeorm": "typeorm-ts-node-commonjs"
+  }
+}
