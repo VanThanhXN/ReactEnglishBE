@@ -1,7 +1,14 @@
 import { Router } from "express";
 import { UserController } from "../controller/userController";
+import { AuthController } from "../controller/authController";
 
 const userRouter = Router();
+
+
+userRouter.post("/signup", AuthController.signup);
+userRouter.post("/login", AuthController.login);
+
+
 userRouter.get("/users", UserController.all);
 userRouter.post("/users", UserController.create);
 userRouter.get("/users/:id", UserController.findOne);

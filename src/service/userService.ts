@@ -1,44 +1,40 @@
-//userService.ts
 import { Repository } from "typeorm";
 import { User } from "../entity/User";
 
 export class UserService {
-  constructor(private readonly userRepository: Repository<User>) {}
-  async findAll() {
-    const users = await this.userRepository.find();
-    return users;
-  }
-  async findOne(id: number) {
-    const users = await this.userRepository.findOne({ where: { id } });
-    return users;
+  constructor(
+    private readonly userRepository: Repository<User>
+  ) { }
+
+  async createUser(data: Partial<User>) {
+    const user = this.userRepository.create(data);
+    return await this.userRepository.save(user);
   }
 
-  async createUser(newuser: User) {
-    const user = this.userRepository.create(newuser);
-    await this.userRepository.save(user);
-    return user;
+  async findAll() {
+    return await this.userRepository.find();
+  }
+
+  async findOne(id: number) {
+    return await this.userRepository.findOneBy({ id });
   }
 
   async updateUser(id: number, data: Partial<User>) {
-    const user = await this.userRepository.findOne({ where: { id } });
-    if (user) {
-      this.userRepository.merge(user, data);
-      await this.userRepository.save(user);
-      return user;
-    } else {
-      return { message: "User not found" };
-    }
+    await this.userRepository.update(id, data);
+    return await this.findOne(id);
   }
 
-  async delete(id: number) {
-    const user = await this.userRepository.findOne({ where: { id } });
+  async deleteUser(id: number) {
+    await this.userRepository.delete(id);
+    return { message: "User deleted successfully" };
+  }
 
-    if (user) {
-      await this.userRepository.remove(user);
-      return { message: "User Deleted successfully" };
-    } else {
-      return { message: "User not found" };
-    }
+  async findByEmail(email: string) {
+    return await this.userRepository
+      .createQueryBuilder("user")
+      .addSelect("user.password")
+      .where("user.email = :email", { email })
+      .getOne();
   }
 
 }
