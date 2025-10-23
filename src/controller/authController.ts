@@ -22,4 +22,6 @@ export class AuthController {
   static async protect (req: Request, res: Response) {
     await authService.protect(req, res);
   }
+
+
 }

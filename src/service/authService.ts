@@ -34,7 +34,7 @@ export class AuthService {
     });
   }
 
-  // Signup logic
+  // SIGNUP
   async signup(req: any, res: any) {
     const { name, email, password, passwordConfirm } = req.body;
     const existingUser = await this.userService.findByEmail(email);
@@ -47,7 +47,7 @@ export class AuthService {
     this.createSendToken(newUser, 201, res);
   }
 
-  // Login
+  // LOGIN
   async login(req: any, res: any) {
     const { email, password } = req.body;
     // Check if email and password exist
@@ -97,9 +97,8 @@ export class AuthService {
         status: "fail",
         message: "The user belonging to this token does no longer exist.",
       });
-    }
-
-
+    } 
+    
     // 4) Check if user changed password after the token was issued
     if (currentUser.changedPasswordAfter(decoded.iat)) {
       return res.status(401).json({
@@ -108,7 +107,7 @@ export class AuthService {
       });
     }
 
-
+    req.user = currentUser;
 
   }
 }

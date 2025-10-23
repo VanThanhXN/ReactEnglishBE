@@ -17,7 +17,7 @@ export class User {
 
     @Column()
     @IsNotEmpty({ message: "Name is required" })
-    @MinLength(6, { message: "Name is too short" })  
+    @MinLength(6, { message: "Name is too short" })
     name: string
 
     @Column()
@@ -58,8 +58,7 @@ export class User {
 
     @BeforeInsert()
     @BeforeUpdate()
-    // Hash password 
-    async hashPassword() {
+    async hashPassword() {     // Hash password 
         try {
             if (this.password) {
                 if (this.password !== this.passwordConfirm) {
@@ -70,6 +69,7 @@ export class User {
                 if (!this.password.startsWith("$2")) {
                     this.password = await bcrypt.hash(this.password, 12);
                     this.passwordConfirm = undefined;
+                    // this.passwordChangedAt = Date.now() - 1000;
                 }
             }
         } catch (error) {
@@ -82,7 +82,8 @@ export class User {
         return await bcrypt.compare(candidatePassword, this.password);
     }
 
-
+    // kiểm tra xem mật khẩu đã bị đổi sau khi phát hành token hay chưa
+    // mục đích: vô hiệu hóa token cũ khi người dùng đổi mật khẩu
     async changedPasswordAfter(JWTTimestamp: number): Promise<boolean> {
         if (this.passwordChangedAt) {
             const changedTimestamp = Math.floor(this.passwordChangedAt.getTime() / 1000);
@@ -90,4 +91,6 @@ export class User {
         }
         return false;
     }
+
+
 }
