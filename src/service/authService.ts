@@ -68,6 +68,16 @@ export class AuthService {
     this.createSendToken(user, 200, res);
   }
 
+  // LOG OUT
+  async logout (req: any, res: any) {
+    res.cookie('jwt', 'loggedout', {
+      expires: new Date(Date.now() + 10 * 1000),
+      httpOnly: true // Ngăn JS truy cập cookie → tăng bảo mật
+    })
+    res.status(200).json({ status: 'success' })
+  }
+
+
   async protect(req: any, res: any) {
     // 1) Get token, 
     let token;
@@ -97,17 +107,51 @@ export class AuthService {
         status: "fail",
         message: "The user belonging to this token does no longer exist.",
       });
-    } 
-    
+    }
+
     // 4) Check if user changed password after the token was issued
     if (currentUser.changedPasswordAfter(decoded.iat)) {
       return res.status(401).json({
         status: "fail",
-        message: "User recently changed password! Please log in again.",
+        message: "Đã đổi pass. login lại",
       });
     }
 
     req.user = currentUser;
+  }
 
+  async restrictTo(...roles: string[]) { 
+    return (req: any, res: any) => {
+      if (!roles.includes(req.user.role)) {
+        return res.status(403).json({
+          status: "fail",
+        });
+      }
+    }
+  }
+  
+  async updatePassword(req: any, res: any) {
+    // 1) Check user exists
+    const user = await this.userService.findOne(req.user.id);
+    if (!user) {
+      return res.status(401).json({
+        status: "fail",
+        message: "User not found.",
+      });
+    }
+    // 2) Check if password  correct
+    if (!(await user.correctPassword(req.body.currentPassword))) {
+      return res.status(401).json({
+        status: "fail",
+        message: "Your current password is wrong.",
+      });
+    }
+    // 3) oke thì update password
+    user.password = req.body.newPassword;
+    user.passwordConfirm = req.body.passwordConfirm;
+    await this.userService.updateUser(user.id, {
+      password: user.password,
+      passwordConfirm: user.passwordConfirm,
+    });
   }
 }

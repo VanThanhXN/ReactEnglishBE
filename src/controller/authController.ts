@@ -23,5 +23,11 @@ export class AuthController {
     await authService.protect(req, res);
   }
 
+  static async updatePassword(req: Request, res: Response) {
+    await authService.updatePassword(req, res);
+  }
 
+    static async logout(req: Request, res: Response) {
+    await authService.logout(req, res);
+  }
 }
