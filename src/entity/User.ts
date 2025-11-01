@@ -13,7 +13,7 @@ export enum UserRole {
 export class User {
 
     @PrimaryGeneratedColumn("uuid")
-    id: number
+    id: string
 
     @Column()
     @IsNotEmpty({ message: "Name is required" })
@@ -49,7 +49,7 @@ export class User {
     @Column({ type: 'timestamp', nullable: true })
     passwordChangedAt: Date;
 
-    @Column({ type: 'timestamp', nullable: true })
+    @Column({ type: 'text', nullable: true })
     passwordResetToken: String;
 
     @Column({ type: 'timestamp', nullable: true })
@@ -57,7 +57,7 @@ export class User {
 
 
     @BeforeInsert()
-    @BeforeUpdate()
+    @BeforeUpdate() // chỉ trigger khi dùng save() 
     async hashPassword() {     // Hash password 
         try {
             if (this.password) {
@@ -77,14 +77,29 @@ export class User {
         }
     }
 
+
+    
+    // Create password reset token
+    createPasswordResetToken(): string {
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        this.passwordResetToken = crypto
+            .createHash('sha256')
+            .update(resetToken)
+            .digest('hex');
+        this.passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes        
+        return resetToken;
+    }
+
     // Compare password
-    async correctPassword(candidatePassword: string): Promise<boolean> {
-        return await bcrypt.compare(candidatePassword, this.password);
+    async correctPassword(candidatePassword: string, userPassword:string): Promise<boolean> {
+        // console.log("candidatePassword:", candidatePassword);
+        // console.log("userPassword:", userPassword);
+        return await bcrypt.compare(candidatePassword, userPassword);
     }
 
     // kiểm tra xem mật khẩu đã bị đổi sau khi phát hành token hay chưa
     // mục đích: vô hiệu hóa token cũ khi người dùng đổi mật khẩu
-    async changedPasswordAfter(JWTTimestamp: number): Promise<boolean> {
+    changedPasswordAfter(JWTTimestamp: number): boolean {
         if (this.passwordChangedAt) {
             const changedTimestamp = Math.floor(this.passwordChangedAt.getTime() / 1000);
             return JWTTimestamp < changedTimestamp;

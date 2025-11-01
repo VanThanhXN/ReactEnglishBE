@@ -15,14 +15,41 @@ export class UserService {
     return await this.userRepository.find();
   }
 
-  async findOne(id: number) {
-    return await this.userRepository.findOneBy({ id });
+  async findOne(id: string) {
+    return this.userRepository.findOne({ where: { id } });
+  }
+  async findOneWithPassword(id: string) {
+    return await this.userRepository
+      .createQueryBuilder("user")
+      .addSelect("user.password")
+      .where("user.id = :id", { id })
+      .getOne();
   }
 
-  async updateUser(id: number, data: Partial<User>) {
-    await this.userRepository.update(id, data);
+
+
+  // async updateUser(id: string, data: Partial<User>) {
+  //   await this.userRepository.update(id, data);
+  //   return await this.findOne(id);
+  // }
+  async updateUser(id: string, data: Partial<User>) {
+    const { password, passwordConfirm } = data;
+    console.log("================================")
+    console.log(password)
+    console.log(passwordConfirm)
+
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new Error('User not found');
+    }
+    if (password) user.password = password;
+    if (passwordConfirm !== undefined) user.passwordConfirm = passwordConfirm;
+
+    await this.userRepository.save(user);
+
     return await this.findOne(id);
   }
+
 
   async deleteUser(id: number) {
     await this.userRepository.delete(id);
@@ -36,5 +63,22 @@ export class UserService {
       .where("user.email = :email", { email })
       .getOne();
   }
+  // user.service.ts
+  async findByCondition(condition: any) {
+    return await this.userRepository.findOne({ where: condition });
+  }
+  async save(user: User): Promise<User> {
+    return await this.userRepository.save(user);
+  }
+  async saveNoReload(user: User): Promise<User> {
+    return await this.userRepository.save(user, { reload: false });
+  }
+  async saveResetToken(user: User) {
+    return this.userRepository.update(user.id, {
+      passwordResetToken: user.passwordResetToken,
+      passwordResetExpires: user.passwordResetExpires,
+    });
+  }
+
 
 }

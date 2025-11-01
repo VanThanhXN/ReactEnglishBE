@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { AppDataSource } from "../data-source";
 import { User } from "../entity/User";
 import { UserService } from "../service/userService";
@@ -19,15 +19,27 @@ export class AuthController {
   }
 
   // Check if user has token
-  static async protect (req: Request, res: Response) {
-    await authService.protect(req, res);
+  static async protect(req: Request, res: Response, next: NextFunction) {
+    await authService.protect(req, res, next);
   }
 
-  static async updatePassword(req: Request, res: Response) {
-    await authService.updatePassword(req, res);
+  static async updatePassword(req: Request, res: Response, next: NextFunction) {
+    await authService.updatePassword(req, res, next);
   }
 
-    static async logout(req: Request, res: Response) {
+  static async logout(req: Request, res: Response) {
     await authService.logout(req, res);
   }
+
+  static restricTo(...roles: string[]) {
+    return authService.restrictTo(...roles);
+  }
+
+  static async forgotPassword(req: Request, res: Response, next: NextFunction) {
+    await authService.forgotPassword(req, res, next);
+  }
+  static async resetPassword(req: Request, res: Response, next: NextFunction) {
+    await authService.resetPassword(req, res, next);
+  }
+
 }
