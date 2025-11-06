@@ -1,5 +1,5 @@
 import * as express from "express";
-import * as bodyParser from "body-parser";
+// import * as bodyParser from "body-parser";
 import { AppDataSource } from "./data-source";
 import userRouter from "./router/userRouter";
 import * as dotenv from 'dotenv';
@@ -22,6 +22,7 @@ AppDataSource.initialize()
 
 
     app.use(express.json());
+    app.use('/api', limiter);
     // setup express app here
     app.use("/api/v1/", userRouter);
 

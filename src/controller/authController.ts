@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { AppDataSource } from "../data-source";
-import { User } from "../entity/User";
+// import { AppDataSource } from "../data-source";
+// import { User } from "../entity/User";
 import { UserService } from "../service/userService";
 import { AuthService } from "../service/authService";
 import { userRepository } from "../repository/userRepository";

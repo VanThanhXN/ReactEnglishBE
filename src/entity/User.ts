@@ -1,5 +1,5 @@
 import { IsNotEmpty, MinLength } from "class-validator"
-import { Entity, PrimaryGeneratedColumn, Column, Unique, CreateDateColumn, UpdateDateColumn, BeforeInsert, BeforeUpdate } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, Unique,BeforeInsert, BeforeUpdate } from "typeorm"
 import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 
@@ -11,7 +11,6 @@ export enum UserRole {
 @Entity()
 @Unique(["email"])
 export class User {
-
     @PrimaryGeneratedColumn("uuid")
     id: string
 
@@ -33,7 +32,7 @@ export class User {
 
     @Column({ nullable: true })
     @IsNotEmpty({ message: "PasswordConfirm is required" })
-    passwordConfirm: String
+    passwordConfirm: string
 
     @Column({
         type: "enum",
@@ -44,13 +43,13 @@ export class User {
 
 
     @Column({ default: true })
-    isActive: Boolean
+    isActive: boolean
 
     @Column({ type: 'timestamp', nullable: true })
     passwordChangedAt: Date;
 
     @Column({ type: 'text', nullable: true })
-    passwordResetToken: String;
+    passwordResetToken: string;
 
     @Column({ type: 'timestamp', nullable: true })
     passwordResetExpires: Date;

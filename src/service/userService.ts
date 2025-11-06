@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
+import { FindOptionsWhere } from "typeorm";
 import { User } from "../entity/User";
-
 export class UserService {
   constructor(
     private readonly userRepository: Repository<User>
@@ -63,10 +63,13 @@ export class UserService {
       .where("user.email = :email", { email })
       .getOne();
   }
+
   // user.service.ts
-  async findByCondition(condition: any) {
+  // lấy kiểu dữ liệu trong entity User
+  async findByCondition(condition: FindOptionsWhere<User>) {
     return await this.userRepository.findOne({ where: condition });
   }
+
   async save(user: User): Promise<User> {
     return await this.userRepository.save(user);
   }

@@ -7,6 +7,7 @@ import { UserService } from "./userService";
 import sendEmail from "../utils/email";
 import AppError from "../utils/appError";
 import { Request, Response, NextFunction } from "express";
+import { JwtPayload } from "../../interface/jwtPayload.interface";
 
 export class AuthService {
   constructor(private readonly userService: UserService) { }
@@ -19,7 +20,7 @@ export class AuthService {
   }
 
   // Gửi token về client
-  private createSendToken(user: User, statusCode: number, res: any) {
+  private createSendToken(user: User, statusCode: number, res: Response) {
     const token = this.signToken(user.id);
     const cookieOptions = {
       expires: new Date(
@@ -40,7 +41,7 @@ export class AuthService {
   }
 
   // SIGNUP
-  async signup(req: any, res: any) {
+  async signup(req: Request, res: Response) {
     const { name, email, password, passwordConfirm } = req.body;
     const existingUser = await this.userService.findByEmail(email);
     if (existingUser) {
@@ -53,7 +54,7 @@ export class AuthService {
   }
 
   // LOGIN
-  async login(req: any, res: any) {
+  async login(req: Request, res: Response) {
     const { email, password } = req.body;
     // Check if email and password exist
     if (!email || !password) {
@@ -76,7 +77,7 @@ export class AuthService {
   }
 
   // LOG OUT
-  async logout(req: any, res: any) {
+  async logout(req: Request, res: Response) {
     res.cookie('jwt', 'loggedout', {
       expires: new Date(Date.now() + 10 * 1000),
       httpOnly: true // Ngăn JS truy cập cookie → tăng bảo mật
@@ -107,8 +108,13 @@ export class AuthService {
     }
 
     // 2) verify token
-    const decoded: any = jwt.verify(token, process.env.JWT_SECRET as string);
+    // const decoded: any = jwt.verify(token, process.env.JWT_SECRET as string);
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET as string
+    ) as JwtPayload;
 
+    
     // 3) Check if user still exists
     const currentUser = await this.userService.findOne(decoded.id);
     if (!currentUser) {
@@ -135,7 +141,7 @@ export class AuthService {
   // This should be a static method or regular method that RETURNS middleware
   // authService.ts
   restrictTo(...roles: string[]) {
-    return (req: any, res: any, next: any) => {
+    return (req: Request, res: Response, next: NextFunction) => {
       if (!roles.includes(req.user.role)) {
         return res.status(403).json({
           status: "fail",
@@ -147,7 +153,7 @@ export class AuthService {
   }
 
 
-  async updatePassword(req: any, res: any, next: any) {
+  async updatePassword(req: Request, res: Response, next: NextFunction) {
     // 1) Check user exists
     const user = await this.userService.findOneWithPassword(req.user.id);
     console.log(user);
@@ -166,7 +172,7 @@ export class AuthService {
     this.createSendToken(user, 200, res);
   }
 
-  async forgotPassword(req: any, res: any, next: any) {
+  async forgotPassword(req: Request, res: Response, next: NextFunction) {
     // 1) Get user based on POSTed email
     const user = await this.userService.findByEmail(req.body.email);
     if (!user) {
@@ -189,13 +195,14 @@ export class AuthService {
         message: 'Token sent to email!'
       });
     } catch (err) {
+      console.error('Email send error:', err.message);
       user.passwordResetToken = undefined;
       user.passwordResetExpires = undefined;
       return next(new AppError('There was an error sending the email. Try again later!', 500));
     }
   }
 
-  async resetPassword(req: any, res: any, next: any) {
+  async resetPassword(req: Request, res: Response, next: NextFunction) {
     try {
       console.log("req.params.token:", req.params.token);
       const hashedToken = crypto
