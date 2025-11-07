@@ -10,18 +10,14 @@ export const AppDataSource = new DataSource({
   username: process.env.POSTGRES_USERNAME,
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DB,
-  synchronize: false, // nên tắt để dùng migration
-  logging: true,
-  entities: ["src/entity/*.ts", "src/entity/**/*.ts"],
-  migrations: ["src/migration/*.ts", "src/migration/**/*.ts"],
-  subscribers: ["src/subscriber/**/*.ts"],
+  synchronize: false, // nên tắt để dùng migrationx
+  logging: true, // display query in console , ex: SELECT * FROM ...
+  entities: ["build/entity/**/*.js"], // chỉ cho TypeORM biết nơi tìm các entity
+  migrations: ["src/migration/**/*.js"], 
+  subscribers: ["src/subscriber/**/*.js"],
   ssl: !!process.env.POSTGRES_SSL,
 });
 // Quy trình làm việc chuẩn với Migration
-// 1. Tạo hoặc chỉnh sửa Entity
-// 2. Sinh ra migration mới
-//   - Ví dụ: npm run typeorm migration:generate -- ./src/migration/CreateUserTable -d ./src/data-source.ts
-// 3. Thực thi Migration (áp dụng thay đổi vào DB)
-// - Ví dụ: npm run typeorm migration:run -- -d ./src/data-source.ts
-// 4. Nếu cần, revert migration: npm run typeorm migration:revert -- -d ./src/data-source.ts
-// Tham khảo thêm tài liệu về Migration tại: https://typeorm.io/migrations
+// 1. Tạo entity
+// 2. Tạo migration : npx typeorm-ts-node-commonjs migration:generate ./src/migration/CreateUserTable -d src/data-source.ts 
+// 3. Chạy migration: npx typeorm-ts-node-commonjs migration:run -d src/data-source.ts

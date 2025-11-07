@@ -7,7 +7,7 @@ import { UserService } from "./userService";
 import sendEmail from "../utils/email";
 import AppError from "../utils/appError";
 import { Request, Response, NextFunction } from "express";
-import { JwtPayload } from "../../interface/jwtPayload.interface";
+import { JwtPayload } from "../interface/jwtPayload.interface";
 
 export class AuthService {
   constructor(private readonly userService: UserService) { }
