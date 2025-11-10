@@ -2,6 +2,7 @@ import * as express from "express";
 // import * as bodyParser from "body-parser";
 import { AppDataSource } from "./data-source";
 import userRouter from "./router/userRouter";
+import examRouter from "./router/examRouter";
 import * as dotenv from 'dotenv';
 import rateLimit from 'express-rate-limit';
 import globalErrorHandler from './controller/errorController';
@@ -23,8 +24,11 @@ AppDataSource.initialize()
 
     app.use(express.json());
     app.use('/api', limiter);
+
     // setup express app here
+    app.use("/api/v1/", examRouter);
     app.use("/api/v1/", userRouter);
+
 
     // start express server
     const PORT = process.env.PORT || 3000;
