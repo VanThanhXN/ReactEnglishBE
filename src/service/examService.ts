@@ -29,7 +29,7 @@ export class ExamService {
     }
 
     // Service
-    async getExamById(examId: string): Promise<Exam | null> {
+    async getExamById(examId: number): Promise<Exam | null> {
         const exam = await this.examRepository.findOne({
             where: { id: examId },
             relations: ["questions", "questions.answers"],
@@ -42,7 +42,7 @@ export class ExamService {
         return result
     }
 
-    async updateExam(examId: string, updateData: Partial<Exam>) {
+    async updateExam(examId: number, updateData: Partial<Exam>) {
         const exam = await this.examRepository.findOne({
             where: { id: examId }
         });
@@ -53,4 +53,60 @@ export class ExamService {
         Object.assign(exam, updateData);
         return await this.examRepository.save(exam);
     }
+
+    // CREATE QUESTION
+    async addQuestion(questionData: {
+        examId: number;
+        questionText: string;
+        orderNumber: number;
+        explanation?: string;
+        answers: Array<{
+            answerText: string;
+            option: string;
+            isCorrect: boolean;
+        }>;
+    }) : Promise<Question> {
+        // 1. Lấy exam
+        const exam = await this.examRepository.findOne({
+            where: { id: questionData.examId }
+        });
+
+        if (!exam) {
+            throw new Error("Exam not found");
+        }
+
+        // 2. Tạo question
+        const question = this.questionRepository.create({
+            examId: questionData.examId,
+            orderNumber: questionData.orderNumber,
+            questionText: questionData.questionText,
+            explanation: questionData.explanation
+        });
+
+        // 3. Lưu question
+        const savedQuestion = await this.questionRepository.save(question);
+
+        // 4. Tạo đáp án
+        // mình lấy đáp án từ phần req.body
+        // duyệt qua từng phần tử trong mảng answers
+        // với mỗi phần tử tạo 1 entity
+        const answers = questionData.answers.map(ans =>
+            this.answerRepository.create({
+                questionId: savedQuestion.id,
+                answerText: ans.answerText,
+                option: ans.option,
+                isCorrect: ans.isCorrect
+            })
+        );
+
+        await this.answerRepository.save(answers);
+
+        // 5. Load lại question vừa tạo với danh sách answers của nó
+        return await this.questionRepository.findOne({
+            where: { id: savedQuestion.id },
+            relations: ["answers"]
+        });
+    }
+
+
 }

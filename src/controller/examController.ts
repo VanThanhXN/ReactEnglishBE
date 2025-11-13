@@ -67,5 +67,32 @@ export class ExamController {
             message: "Update thanh cong"
         })
     }
+
+    static async addQuestion(req: Request, res: Response): Promise<void> {
+        const examId = req.params.id; // UUID của exam
+        if (!examId) {
+            return res.status(404).json({
+                success: false,
+                message: "Không có exam này"
+            });
+        }
+
+        const questionData = { ...req.body, examId };
+
+        try {
+            const question = await examService.addQuestion(questionData);
+            res.status(201).json({
+                success: true,
+                data: question,
+                message: "Add question successful"
+            });
+        } catch (error: any) {
+            res.status(400).json({
+                success: false,
+                message: error.message || "Something went wrong"
+            });
+        }
+    }
+
 }
 

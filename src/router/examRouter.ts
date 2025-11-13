@@ -18,5 +18,7 @@ examRouter.patch("/update-exam/:id", ExamController.updateExam)
 // DETELE EXAM
 examRouter.patch("/delete-exam/:id", ExamController.deleteExam)
 
+// ADD QUESTION TO EXAM
+examRouter.post("/create-question/:id", ExamController.addQuestion)
 
 export default examRouter;

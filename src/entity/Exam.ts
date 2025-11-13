@@ -5,8 +5,8 @@ import { Question } from "./Question";
 @Entity("exams")
 
 export class Exam {
-    @PrimaryGeneratedColumn("uuid")
-    id: string
+    @PrimaryGeneratedColumn()
+    id: number;
 
     @Column()
     @IsNotEmpty({ message: "Title is required" })
@@ -21,8 +21,8 @@ export class Exam {
 
     @Column({ type: "int", default: 60 }) // in minutes
     duration: number;
-    
-    @Column({type: "boolean", default: true})
+
+    @Column({ type: "boolean", default: true })
     isActive: boolean
 
     // question : đại diện cho bản ghi Question BẤT KÌ

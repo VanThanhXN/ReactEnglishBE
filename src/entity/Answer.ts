@@ -1,14 +1,14 @@
 import { IsNotEmpty, MinLength } from "class-validator"
-import { Entity, PrimaryGeneratedColumn, Column, Unique, BeforeInsert, BeforeUpdate, CreateDateColumn, UpdateDateColumn, ManyToOne } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, Unique, BeforeInsert, BeforeUpdate, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from "typeorm"
 import { Exam } from "./Exam";
 import { Question } from "./Question";
 @Entity("answers")
 
 export class Answer {
-    @PrimaryGeneratedColumn("uuid")
-    id: string;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-    @Column({type: 'int'})
+    @Column({ type: 'int' })
     questionId: number;
 
     @Column({ type: 'text' })
@@ -19,13 +19,14 @@ export class Answer {
     @Column({ type: 'boolean', default: false })
     isCorrect: boolean;
 
-    @Column({ type: 'text' })
+    @Column({ type: 'text', nullable: true })
     explanation: string;
 
     @Column({ type: 'char', length: 1 })
     option: String;
 
     @ManyToOne(() => Question, question => question.answers, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: "questionId" })
     question: Question;
 
 
