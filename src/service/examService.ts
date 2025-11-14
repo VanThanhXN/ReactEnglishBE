@@ -65,7 +65,7 @@ export class ExamService {
             option: string;
             isCorrect: boolean;
         }>;
-    }) : Promise<Question> {
+    }): Promise<Question> {
         // 1. Lấy exam
         const exam = await this.examRepository.findOne({
             where: { id: questionData.examId }
@@ -108,5 +108,22 @@ export class ExamService {
         });
     }
 
+    async updateQuestion(questionId: number, updateData: Partial<Question>) {
+        const question = await this.questionRepository.findOne({
+            where: { id: questionId }
+        })
+
+        if (!question) {
+            return null;
+        }
+
+        Object.assign(question, updateData);
+        return await this.questionRepository.save(question)
+    }
+    async deleteQuestion(questionId: number): Promise<boolean> {
+        const result = await this.questionRepository.delete(questionId);
+        // tra ve true neu co it nhat 1 dong dc update
+        return result.affected > 0;
+    }
 
 }

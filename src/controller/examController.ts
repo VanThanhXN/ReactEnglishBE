@@ -93,6 +93,39 @@ export class ExamController {
             });
         }
     }
+    // PUT /api/questions/:id - Cập nhật câu hỏi
+    static async updateQuestion(req: Request, res: Response): Promise<void> {
+        const questionId = req.params.id;
+        const updateData = req.body;
+        if (!questionId) {
+            return res.status(404).json({
+                success: false,
+                message: "Không có exam này"
+            });
+        }
+        const exam = await examService.updateQuestion(questionId, updateData)
+        res.status(200).json({
+            success: true,
+            message: "update thanh cong",
+            data: exam
+        })
+    }
+    static async deleteQuestion(req: Request, res: Response) {
+        const questionId = req.params.id;
+        const deleted = await examService.deleteQuestion(questionId)
+        if (!deleted) {
+            res.status(404).json({
+                success: false,
+                message: "Question not found"
+            })
+            return
+        }
+        res.json({
+            success: true,
+            message: "Question deleted successfully"
+        });
+
+    }
 
 }
 
