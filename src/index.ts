@@ -23,7 +23,7 @@ AppDataSource.initialize()
 
 
     app.use(express.json());
-    app.use('/api', limiter);
+    // app.use('/api', limiter);
 
     // setup express app here
     app.use("/api/v1/", examRouter);

@@ -125,5 +125,16 @@ export class ExamService {
         // tra ve true neu co it nhat 1 dong dc update
         return result.affected > 0;
     }
+    async getExamWithQuestions(examId: number): Promise<Exam | null> {
+        return await this.examRepository.findOne({
+            where: { id: examId },
+            relations: ["questions", "questions.answers"],
+            order: {
+                questions: {
+                    orderNumber: "ASC"
+                }
+            }
+        });
+    }
 
 }

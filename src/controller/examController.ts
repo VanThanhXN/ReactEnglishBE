@@ -126,6 +126,22 @@ export class ExamController {
         });
 
     }
+    // Lấy câu hỏi theo đề thi
+    static async getQuestionByExamID(req: Request, res: Response): Promise<void> {
+        const examId = parseInt(req.params.examId);
+        if (!examId) {
+            res.status(400).json({
+                success: false,
+                message: "Invalid exam ID"
+            });
+            return;
+        }
+        const examwithQuestion = await examService.getExamWithQuestions(examId)
+        res.json({
+            success: true,
+            data: examwithQuestion
+        });
+    }
 
 }
 

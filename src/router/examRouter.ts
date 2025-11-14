@@ -24,4 +24,6 @@ examRouter.post("/create-question/:id", ExamController.addQuestion)
 examRouter.patch("/update-question/:id", ExamController.updateQuestion)
 // DELETE QUESTION
 examRouter.delete("/delete-question/:id", ExamController.deleteQuestion)
+// GET QUESTION BY EXAMID
+examRouter.get("/exams/:examId/questions", ExamController.getQuestionByExamID)
 export default examRouter;
