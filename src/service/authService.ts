@@ -133,6 +133,7 @@ export class AuthService {
 
     req.user = currentUser;
     console.log("da chạy đến đây 3")
+    console.log(req.user)
     next();
   }
 

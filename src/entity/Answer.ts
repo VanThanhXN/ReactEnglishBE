@@ -25,8 +25,9 @@ export class Answer {
     @Column({ type: 'char', length: 1 })
     option: String;
 
+    // nhieu dap an thuộc ve 1 câu hỏi
     @ManyToOne(() => Question, question => question.answers, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: "questionId" })
+    @JoinColumn({ name: "questionId" }) // khoa ngoai
     question: Question;
 
 

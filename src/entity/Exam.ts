@@ -1,7 +1,7 @@
 import { IsNotEmpty, MinLength } from "class-validator"
 import { Entity, PrimaryGeneratedColumn, Column, Unique, BeforeInsert, BeforeUpdate, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm"
 import { Question } from "./Question";
-
+import { UserExamAttempt } from "./UserExamAttempt";
 @Entity("exams")
 
 export class Exam {
@@ -16,7 +16,7 @@ export class Exam {
     @Column({ type: 'text', nullable: true })
     description: string
 
-    @Column({ type: "int", default: 20 })
+    @Column({ type: "int" })
     totalQuestions: number;
 
     @Column({ type: "int", default: 60 }) // in minutes
@@ -28,9 +28,11 @@ export class Exam {
     // question : đại diện cho bản ghi Question BẤT KÌ
     // question.exam : đại diện cho exam trong bản ghi Question
     @OneToMany(() => Question, question => question.exam)
-    questions: Question[];
+    questions: Question[]; // 1 bai thi gom nhieu cau hoi
 
-
+    @OneToMany(() => UserExamAttempt, (attempt) => attempt.exam)
+    attempts: UserExamAttempt[]; // 1 bai thi gom nhieu lan lam
+    
     @CreateDateColumn()
     createdAt: Date;
 
