@@ -26,8 +26,9 @@ AppDataSource.initialize()
     // app.use('/api', limiter);
 
     // setup express app here
-    app.use("/api/v1/", examRouter);
     app.use("/api/v1/", userRouter);
+    app.use("/api/v1/", examRouter);
+
 
 
     // start express server

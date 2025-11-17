@@ -41,6 +41,7 @@ export class UserExamController {
             message: "Exam submitted successfully"
         });
     }
+      // GET /api/user/attempts/:attemptId/result - Lấy kết quả bài thi
     static async getExamResult(req: Request, res: Response) {
         const attemptId = parseInt(req.params.attemptId);
         const result = await userExamService.getExamResult(attemptId);
