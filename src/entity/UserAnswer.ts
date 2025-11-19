@@ -28,8 +28,13 @@ export class UserAnswer {
     @JoinColumn({ name: "attemptId" })
     attempt: UserExamAttempt;
 
+    // Bảng UserAnswer sẽ nối với bảng Question, 
+    // ở bảng question sẽ có thuộc tính (attribute) tên userAnswer
+    // đó là sự móc nối của bên kia
     @ManyToOne(() => Question, (question) => question.userAnswers)
     @JoinColumn({ name: "questionId" })
+    // khi truy vấn, sẽ đổ dữ liệu vào biến question
+    // ví dụ như là khi relation
     question: Question;
 
     @ManyToOne(() => Answer, { nullable: true })

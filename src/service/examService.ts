@@ -116,7 +116,7 @@ export class ExamService {
         if (!question) {
             return null;
         }
-
+        // copy từ updateData vào question
         Object.assign(question, updateData);
         return await this.questionRepository.save(question)
     }

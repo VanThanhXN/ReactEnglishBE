@@ -29,6 +29,7 @@ export class Question {
     exam: Exam; // trong bảng question lưu examId
 
     // 1 cau hoi  gom nhieu dap an
+    // khi luu question thì lưu thêm answer
     @OneToMany(() => Answer, answer => answer.question, { cascade: true })
     answers: Answer[];
 

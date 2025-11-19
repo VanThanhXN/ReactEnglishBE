@@ -45,6 +45,7 @@ export class AuthService {
 
   // SIGNUP
   signup = catchAsync(async (req: Request, res: Response, next : NextFunction) => {
+    console.log("Kiem tra chuc nang")
     const { name, email, password, passwordConfirm } = req.body;
     const existingUser = await this.userService.findByEmail(email);
     if (existingUser) {

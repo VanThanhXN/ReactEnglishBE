@@ -13,7 +13,7 @@ examRouter.post("/create-exam", ExamController.createExams);
 // GET ALL EXAM
 examRouter.get("/get-all-exam", ExamController.getAllExams)
 // GET EXAM BY ID
-examRouter.get("/exam/:id", ExamController.getExamById)
+examRouter.get("/exam-by-id/:id", ExamController.getExamById)
 
 // UPDATE EXAM
 examRouter.patch("/update-exam/:id", ExamController.updateExam)
