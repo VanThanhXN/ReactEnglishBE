@@ -18,7 +18,7 @@ examRouter.get("/exam-by-id/:id", ExamController.getExamById)
 // UPDATE EXAM
 examRouter.patch("/update-exam/:id", ExamController.updateExam)
 // DETELE EXAM
-examRouter.patch("/delete-exam/:id", ExamController.deleteExam)
+examRouter.delete("/delete-exam/:id", ExamController.deleteExam)
 
 // ADD QUESTION TO EXAM
 examRouter.post("/create-question/:id", ExamController.addQuestion)

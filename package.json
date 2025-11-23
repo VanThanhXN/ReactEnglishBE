@@ -50,7 +50,8 @@
 
     "//": "npm run build: build lại code TypeScript. Sau đó chạy file node build/index.js",
     "//": "Tức là: Build code, rồi chạy app bằng bản đã build.",
-    "start": "npm run build && node build/index.js",
+    "//": "Railway sẽ tự động build trước (theo railway.json), nên start chỉ cần chạy file đã build",
+    "start": "node build/index.js",
 
     "//": "Chạy các lệnh TypeORM với ts-node và CommonJS",
     "typeorm": "typeorm-ts-node-commonjs",

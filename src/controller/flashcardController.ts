@@ -9,19 +9,74 @@ export class FlashcardController {
 
     // CONTROLLER WITH FLASH CARD DECK
     static async createFlashcardDeck(req: Request, res: Response) {
-        const { name, description } = req.body;
-        const userId = req.user.id
-        const deckData = {
-            userId: userId,
-            name: name,
-            description: description
+        try {
+            // Debug: Log to see what's received
+            console.log('=== CREATE DECK REQUEST ===');
+            console.log('Request body:', req.body);
+            console.log('Request body type:', typeof req.body);
+            console.log('Request body keys:', Object.keys(req.body || {}));
+            console.log('Content-Type:', req.headers['content-type']);
+            
+            const { name, description } = req.body;
+            const userId = req.user?.id;
+            
+            console.log('Extracted name:', name, 'Type:', typeof name);
+            console.log('Extracted description:', description);
+            console.log('User ID:', userId);
+            
+            // Validate user
+            if (!userId) {
+                return res.status(401).json({
+                    success: false,
+                    message: "Authentication required"
+                });
+            }
+            
+            // Validate that name is provided and not empty
+            // Check for both undefined, null, empty string, and whitespace-only strings
+            if (name === undefined || name === null || name === '' || (typeof name === 'string' && name.trim() === '')) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Name is required and cannot be empty",
+                    debug: {
+                        receivedBody: req.body,
+                        bodyKeys: Object.keys(req.body || {}),
+                        nameValue: name,
+                        nameType: typeof name,
+                        nameIsUndefined: name === undefined,
+                        nameIsNull: name === null,
+                        nameIsEmpty: name === ''
+                    }
+                });
+            }
+            
+            // Prepare deck data - ensure name is a string and trimmed
+            const deckData: any = {
+                userId: userId,
+                name: String(name).trim()
+            };
+            
+            // Only add description if it's provided
+            if (description !== undefined && description !== null && description !== '') {
+                deckData.description = String(description).trim();
+            }
+            
+            console.log('Deck data to save:', deckData);
+            
+            const deck = await flashcardService.createDeck(deckData);
+            res.status(201).json({
+                success: true,
+                data: deck,
+                message: "Deck created successfully"
+            });
+        } catch (error: any) {
+            console.error('Error creating deck:', error);
+            res.status(500).json({
+                success: false,
+                message: error.message || "Failed to create deck",
+                error: process.env.NODE_ENV === 'development' ? error.stack : undefined
+            });
         }
-        const deck = await flashcardService.createDeck(deckData)
-        res.status(201).json({
-            success: true,
-            data: deck,
-            message: "Deck created successfully"
-        })
     }
 
     static async getAllDeck(req: Request, res: Response) {

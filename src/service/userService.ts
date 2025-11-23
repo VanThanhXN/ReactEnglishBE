@@ -36,22 +36,19 @@ export class UserService {
 
   // Partial: chỉ cần truyền một số trường cần cập nhật
   async updateUser(id: string, data: Partial<User>) {
-    const { password, passwordConfirm } = data;
-    console.log("================================")
-    console.log(password)
-    console.log(passwordConfirm)
-
     const user = await this.userRepository.findOne({ where: { id } });
     if (!user) {
       throw new Error('User not found');
     }
-    if (password) user.password = password;
-    if (passwordConfirm !== undefined) user.passwordConfirm = passwordConfirm;
+    
+    // Update all fields from data
+    Object.assign(user, data);
+    
     await this.userRepository.save(user);
     return await this.findOne(id);
   }
 
-  async deleteUser(id: number) {
+  async deleteUser(id: string) {
     await this.userRepository.update(id, {isActive: false});
     return { message: "User deleted successfully" };
   }
