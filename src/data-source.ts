@@ -9,6 +9,8 @@ function getDatabaseConfig() {
   const databaseUrl = process.env.DATABASE_URL || process.env.DATABASE_PUBLIC_URL;
   if (databaseUrl) {
     const url = new URL(databaseUrl);
+    const sslRequired = url.searchParams.get("sslmode") !== "disable" || !!process.env.POSTGRES_SSL;
+    
     return {
       type: "postgres" as const,
       host: url.hostname,
@@ -16,19 +18,27 @@ function getDatabaseConfig() {
       username: url.username,
       password: url.password,
       database: url.pathname.slice(1), // Bỏ dấu / ở đầu
-      ssl: url.searchParams.get("sslmode") !== "disable" || !!process.env.POSTGRES_SSL,
+      // Railway PostgreSQL sử dụng SSL với self-signed certificate
+      // Cần rejectUnauthorized: false để chấp nhận certificate
+      ssl: sslRequired ? {
+        rejectUnauthorized: false
+      } : false,
     };
   }
 
   // Fallback về các biến môi trường riêng lẻ
+  const sslRequired = !!process.env.POSTGRES_SSL;
   return {
     type: "postgres" as const,
     host: process.env.POSTGRES_HOST || "localhost",
     port: Number(process.env.POSTGRES_PORT) || 5432,
-  username: process.env.POSTGRES_USERNAME,
-  password: process.env.POSTGRES_PASSWORD,
-  database: process.env.POSTGRES_DB,
-    ssl: !!process.env.POSTGRES_SSL,
+    username: process.env.POSTGRES_USERNAME,
+    password: process.env.POSTGRES_PASSWORD,
+    database: process.env.POSTGRES_DB,
+    // Nếu cần SSL, sử dụng rejectUnauthorized: false cho Railway
+    ssl: sslRequired ? {
+      rejectUnauthorized: false
+    } : false,
   };
 }
 
