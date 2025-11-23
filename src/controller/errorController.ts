@@ -20,7 +20,13 @@ const sendErrorProd = (err: AppError, res: Response): void => {
       message: err.message,
     });
   } else {
-    console.error('ERROR ', err);
+    // Log chi tiết lỗi để debug (sẽ hiển thị trong Railway logs)
+    console.error('ERROR DETAILS:', {
+      message: err.message,
+      stack: err.stack,
+      name: err.name,
+      code: (err as any).code,
+    });
     res.status(500).json({
       status: 'error',
       message: 'Something went very wrong!',

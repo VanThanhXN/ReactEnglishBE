@@ -31,14 +31,13 @@ AppDataSource.initialize()
     app.use("/api/v1/flashcard", flashcardRouter);
     app.use("/api/v1/exam", examRouter);
 
-
+    // Error handler phải đặt SAU tất cả routes và TRƯỚC app.listen()
+    app.use(globalErrorHandler);
 
     // start express server
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {
       console.log(`Server đang chạy ở port ${PORT} (${process.env.NODE_ENV})`);
     });
-
-    app.use(globalErrorHandler);
   })
   .catch((error) => console.log(error));
