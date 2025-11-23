@@ -55,6 +55,10 @@
 
     "//": "Chạy các lệnh TypeORM với ts-node và CommonJS",
     "typeorm": "typeorm-ts-node-commonjs",
+    "//": "Chạy migrations trong production (sau khi build)",
+    "migration:run": "NODE_ENV=production npx typeorm-ts-node-commonjs migration:run -d build/data-source.js",
+    "//": "Chạy migrations trong development",
+    "migration:run:dev": "npx typeorm-ts-node-commonjs migration:run -d src/data-source.ts",
 
     "lint": "eslint \"src/**/*.{js,ts,tsx}\"",
     "lint:fix": "eslint 'src/**/*.{js,ts,tsx}' --fix"
