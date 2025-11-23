@@ -3,11 +3,12 @@ import { DataSource } from "typeorm";
 import "dotenv/config";
 // import { User } from "./entity/User";
 
-// Hỗ trợ DATABASE_URL từ Railway hoặc các biến môi trường riêng lẻ
+// Hỗ trợ DATABASE_URL hoặc DATABASE_PUBLIC_URL từ Railway hoặc các biến môi trường riêng lẻ
 function getDatabaseConfig() {
-  // Railway cung cấp DATABASE_URL dạng: postgresql://user:password@host:port/database
-  if (process.env.DATABASE_URL) {
-    const url = new URL(process.env.DATABASE_URL);
+  // Railway cung cấp DATABASE_URL hoặc DATABASE_PUBLIC_URL dạng: postgresql://user:password@host:port/database
+  const databaseUrl = process.env.DATABASE_URL || process.env.DATABASE_PUBLIC_URL;
+  if (databaseUrl) {
+    const url = new URL(databaseUrl);
     return {
       type: "postgres" as const,
       host: url.hostname,
@@ -24,9 +25,9 @@ function getDatabaseConfig() {
     type: "postgres" as const,
     host: process.env.POSTGRES_HOST || "localhost",
     port: Number(process.env.POSTGRES_PORT) || 5432,
-    username: process.env.POSTGRES_USERNAME,
-    password: process.env.POSTGRES_PASSWORD,
-    database: process.env.POSTGRES_DB,
+  username: process.env.POSTGRES_USERNAME,
+  password: process.env.POSTGRES_PASSWORD,
+  database: process.env.POSTGRES_DB,
     ssl: !!process.env.POSTGRES_SSL,
   };
 }
